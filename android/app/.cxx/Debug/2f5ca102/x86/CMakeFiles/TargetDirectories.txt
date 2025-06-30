@@ -1,0 +1,2 @@
+/Users/oro000492/Desktop/UNIVERSIDAD/Cuatrimestre 8/Desarrollo Avanzado de aplicaciones /proyecto-segundo-parcial-MANY1730RS/android/app/.cxx/Debug/2f5ca102/x86/CMakeFiles/edit_cache.dir
+/Users/oro000492/Desktop/UNIVERSIDAD/Cuatrimestre 8/Desarrollo Avanzado de aplicaciones /proyecto-segundo-parcial-MANY1730RS/android/app/.cxx/Debug/2f5ca102/x86/CMakeFiles/rebuild_cache.dir

@@ -9,8 +9,9 @@ class TaskCard extends StatelessWidget {
   final VoidCallback onToggle;
   final VoidCallback onDelete;
   final Animation<double> iconRotation;
-  final DateTime? dueDate;
-  final TimeOfDay? dueTime;
+  final DateTime? dueDate; // 1. Aquí se recibe la fecha límite de la tarea
+  final TimeOfDay?
+  dueTime; // 1. Aquí se recibe la hora límite de la tarea (dueTime)
   final int index;
 
   const TaskCard({
@@ -74,6 +75,8 @@ class TaskCard extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
+
+              // 1. Aquí se muestra la fecha límite (dueDate) si está asignada
               if (dueDate != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
@@ -83,29 +86,41 @@ class TaskCard extends StatelessWidget {
                     children: [
                       Text(
                         'Vence: ${DateFormat('dd/MM/yyyy').format(dueDate!)}',
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
                       ),
+                      // 1. Aquí se muestra la hora límite (dueTime) si está asignada
                       if (dueTime != null)
                         Text(
                           'Hora: ${dueTime!.hour.toString().padLeft(2, '0')}:${dueTime!.minute.toString().padLeft(2, '0')}',
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
                     ],
                   ),
                 ),
             ],
           ),
+
+          // Botones de edición y eliminación
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
                 icon: const Icon(Icons.edit, color: Colors.blue),
                 onPressed: () {
+                  // Al pulsar editar se abre el modal para modificar la tarea, pasando el índice
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
                     ),
                     builder: (_) => EditTaskSheet(index: index),
                   );

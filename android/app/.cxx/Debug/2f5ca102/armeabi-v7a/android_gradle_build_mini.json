@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/oro000492/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/oro000492/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/oro000492/Desktop/UNIVERSIDAD/Cuatrimestre 8/Desarrollo Avanzado de aplicaciones /proyecto-segundo-parcial-MANY1730RS/android/app/.cxx/Debug/2f5ca102/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/oro000492/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/oro000492/Desktop/UNIVERSIDAD/Cuatrimestre 8/Desarrollo Avanzado de aplicaciones /proyecto-segundo-parcial-MANY1730RS/android/app/.cxx/Debug/2f5ca102/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}
