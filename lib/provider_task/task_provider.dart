@@ -1,97 +1,64 @@
 import 'package:flutter/material.dart';
+// Integración Hive: importación de Hive
+import 'package:hive/hive.dart';
+import '../models/task_model.dart';
 import '../services/notification_service.dart';
 
-// Clase que representa una tarea individual.
-class Task {
-  String title;
-  bool done;
-
-  // 1. Manejo de la hora (dueTime): Se agregó como atributo opcional.
-  DateTime? dueDate;
-  TimeOfDay? dueTime;
-
-  // 2. Identificador de notificacion (notificationId): Se guarda aquí.
-  int? notificationId;
-
-  Task({
-    required this.title,
-    this.done = false,
-    this.dueDate,
-    this.dueTime,
-    this.notificationId, // 2. Se inicializa aquí si existe una notificacion programada.
-  });
-}
-
-// Proveedor de tareas que gestiona el estado.
 class TaskProvider with ChangeNotifier {
-  final List<Task> _tasks = [];
+  // Integración Hive: acceso a la caja tasksBox
+  Box<Task> get _taskBox => Hive.box<Task>('tasksBox');
 
-  List<Task> get tasks => List.unmodifiable(_tasks);
+  // Integración Hive: obtención de tareas desde Hive
+  List<Task> get tasks => _taskBox.values.toList();
 
-  // Metodo para agregar una nueva tarea al inicio de la lista.
-  void addTask(
-    String title, {
-    DateTime? dueDate,
-    TimeOfDay? dueTime,
-    int? notificationId,
-  }) {
-    _tasks.insert(
-      0,
-      Task(
-        title: title,
-        dueDate: dueDate,
-        dueTime:
-            dueTime, // 1. Se asigna la hora de vencimiento al crear la tarea.
-        notificationId:
-            notificationId, // 2. Se guarda el ID de la notificacion.
-      ),
+  void addTask(String title, {DateTime? dueDate, TimeOfDay? dueTime, int? notificationId}) async {
+    // Integración Hive: creación y almacenamiento de tarea en Hive
+    final task = Task(
+      title: title,
+      dueDate: dueDate,
+      notificationId: notificationId,
     );
+
+    await _taskBox.add(task);
     notifyListeners();
   }
 
-  // Cambia el estado de completado de una tarea.
-  void toggleTask(int index) {
-    _tasks[index].done = !_tasks[index].done;
-    notifyListeners();
-  }
-
-  // Elimina una tarea, y si tenia una notificacion, tambien la cancela.
-  void removeTask(int index) {
-    final task = _tasks[index];
-
-    // 3. Cancelacion de la notificacion anterior:
-    // Si existe un notificationId, se cancela la notificacion pendiente.
-    // Esto es importante para evitar que el usuario reciba alertas de tareas eliminadas.
-    if (task.notificationId != null) {
-      NotificationService.cancelNotification(task.notificationId!);
+  void toggleTask(int index) async {
+    // Integración Hive: actualización de estado en Hive
+    final task = _taskBox.getAt(index);
+    if (task != null) {
+      task.done = !task.done;
+      await task.save();
+      notifyListeners();
     }
-
-    _tasks.removeAt(index);
-    notifyListeners();
   }
 
-  // Actualiza una tarea existente y programa una nueva notificacion si aplica.
-  void updateTask(
-    int index,
-    String newTitle, {
-    DateTime? newDate,
-    TimeOfDay? newTime,
-    int? notificationId,
-  }) {
-    final task = _tasks[index];
-
-    // 3. Cancelacion de la notificacion anterior (si existe):
-    // Es importante para evitar duplicados de notificaciones y mantener actualizado el recordatorio.
-    if (task.notificationId != null) {
-      NotificationService.cancelNotification(task.notificationId!);
+  void removeTask(int index) async {
+    // Integración Hive: eliminación de tarea en Hive
+    final task = _taskBox.getAt(index);
+    if (task != null) {
+      if (task.notificationId != null) {
+        await NotificationService.cancelNotification(task.notificationId!);
+      }
+      await task.delete();
+      notifyListeners();
     }
+  }
 
-    // Se actualizan los campos, incluyendo la hora (1) y el ID de notificacion (2)
-    _tasks[index].title = newTitle;
-    _tasks[index].dueDate = newDate;
-    _tasks[index].dueTime = newTime;
-    _tasks[index].notificationId = notificationId;
+  void updateTask(int index, String newTitle, {DateTime? newDate, TimeOfDay? newTime, int? notificationId}) async {
+    // Integración Hive: actualización de campos en tarea almacenada en Hive
+    final task = _taskBox.getAt(index);
+    if (task != null) {
+      if (task.notificationId != null) {
+        await NotificationService.cancelNotification(task.notificationId!);
+      }
 
-    notifyListeners();
+      task.title = newTitle;
+      task.dueDate = newDate;
+      task.notificationId = notificationId;
+
+      await task.save();
+      notifyListeners();
+    }
   }
 }
