@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
+// Integración Hive: importación de Hive Flutter
 import 'package:hive_flutter/hive_flutter.dart';
+
 import 'screens/tarea_screen.dart';
 import 'tema/tema_app.dart';
 import 'package:provider/provider.dart';
 import 'provider_task/task_provider.dart';
+import 'provider_task/theme_provider.dart'; // NUEVO
+
+// Importar modelo para Hive
 import 'models/task_model.dart';
 
-// 🔔 Importar el servicio de notificaciones
+// Importar el servicio de notificaciones
 import 'services/notification_service.dart';
 
 void main() async {
   // Asegura que Flutter esté inicializado
   WidgetsFlutterBinding.ensureInitialized();
+
   // Integración Hive: inicialización de Hive
   await Hive.initFlutter();
+
   // Integración Hive: registro del adapter para Task
   Hive.registerAdapter(TaskAdapter());
+
   // Integración Hive: apertura de la caja tasksBox
   await Hive.openBox<Task>('tasksBox');
 
@@ -27,8 +35,11 @@ void main() async {
 
   // Iniciar la app
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => TaskProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TaskProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()), // ✅ NUEVO
+      ],
       child: const MyApp(),
     ),
   );
@@ -39,11 +50,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Tareas Pro',
-      theme: AppTheme.theme,
-      home: const TaskScreen(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Cambio de Tema',
+          theme: AppTheme.theme, // tema claro personalizado
+          darkTheme: ThemeData.dark(), // tema oscuro estándar
+          themeMode:
+              themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: const TaskScreen(),
+        );
+      },
     );
   }
 }

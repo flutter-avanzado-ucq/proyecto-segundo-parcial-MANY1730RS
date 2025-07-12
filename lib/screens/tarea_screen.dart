@@ -5,6 +5,7 @@ import '../widgets/card_tarea.dart';
 import '../widgets/header.dart';
 import '../widgets/add_task_sheet.dart';
 import '../provider_task/task_provider.dart';
+import '../provider_task/theme_provider.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -48,6 +49,25 @@ class _TaskScreenState extends State<TaskScreen>
     final taskProvider = context.watch<TaskProvider>();
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cambio de Tema'),
+        actions: [
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return IconButton(
+                icon: Icon(
+                  themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                ),
+                tooltip: 'Cambiar tema',
+                onPressed: () {
+                  themeProvider
+                      .toggleTheme(); // Cambia y guarda el nuevo estado
+                },
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
