@@ -1,97 +1,95 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import '../models/task_model.dart';
 import '../services/notification_service.dart';
 
-// Clase que representa una tarea individual.
-class Task {
-  String title;
-  bool done;
-
-  // 1. Manejo de la hora (dueTime): Se agregó como atributo opcional.
-  DateTime? dueDate;
-  TimeOfDay? dueTime;
-
-  // 2. Identificador de notificacion (notificationId): Se guarda aquí.
-  int? notificationId;
-
-  Task({
-    required this.title,
-    this.done = false,
-    this.dueDate,
-    this.dueTime,
-    this.notificationId, // 2. Se inicializa aquí si existe una notificacion programada.
-  });
-}
-
-// Proveedor de tareas que gestiona el estado.
 class TaskProvider with ChangeNotifier {
-  final List<Task> _tasks = [];
+  Box<Task> get _taskBox => Hive.box<Task>('tasksBox');
 
-  List<Task> get tasks => List.unmodifiable(_tasks);
+  List<Task> get tasks => _taskBox.values.toList();
 
-  // Metodo para agregar una nueva tarea al inicio de la lista.
   void addTask(
     String title, {
     DateTime? dueDate,
     TimeOfDay? dueTime,
     int? notificationId,
-  }) {
-    _tasks.insert(
-      0,
-      Task(
-        title: title,
-        dueDate: dueDate,
-        dueTime:
-            dueTime, // 1. Se asigna la hora de vencimiento al crear la tarea.
-        notificationId:
-            notificationId, // 2. Se guarda el ID de la notificacion.
-      ),
-    );
-    notifyListeners();
-  }
-
-  // Cambia el estado de completado de una tarea.
-  void toggleTask(int index) {
-    _tasks[index].done = !_tasks[index].done;
-    notifyListeners();
-  }
-
-  // Elimina una tarea, y si tenia una notificacion, tambien la cancela.
-  void removeTask(int index) {
-    final task = _tasks[index];
-
-    // 3. Cancelacion de la notificacion anterior:
-    // Si existe un notificationId, se cancela la notificacion pendiente.
-    // Esto es importante para evitar que el usuario reciba alertas de tareas eliminadas.
-    if (task.notificationId != null) {
-      NotificationService.cancelNotification(task.notificationId!);
+  }) async {
+    // 🛠️ Combinar fecha y hora si ambas están presentes
+    DateTime? fullDueDate;
+    if (dueDate != null && dueTime != null) {
+      fullDueDate = DateTime(
+        dueDate.year,
+        dueDate.month,
+        dueDate.day,
+        dueTime.hour,
+        dueTime.minute,
+      );
+    } else {
+      fullDueDate = dueDate;
     }
 
-    _tasks.removeAt(index);
+    final task = Task(
+      title: title,
+      dueDate: fullDueDate,
+      notificationId: notificationId,
+    );
+
+    await _taskBox.add(task);
     notifyListeners();
   }
 
-  // Actualiza una tarea existente y programa una nueva notificacion si aplica.
+  void toggleTask(int index) async {
+    final task = _taskBox.getAt(index);
+    if (task != null) {
+      task.done = !task.done;
+      await task.save();
+      notifyListeners();
+    }
+  }
+
+  void removeTask(int index) async {
+    final task = _taskBox.getAt(index);
+    if (task != null) {
+      if (task.notificationId != null) {
+        await NotificationService.cancelNotification(task.notificationId!);
+      }
+      await task.delete();
+      notifyListeners();
+    }
+  }
+
   void updateTask(
     int index,
     String newTitle, {
     DateTime? newDate,
     TimeOfDay? newTime,
     int? notificationId,
-  }) {
-    final task = _tasks[index];
+  }) async {
+    final task = _taskBox.getAt(index);
+    if (task != null) {
+      if (task.notificationId != null) {
+        await NotificationService.cancelNotification(task.notificationId!);
+      }
 
-    // 3. Cancelacion de la notificacion anterior (si existe):
-    // Es importante para evitar duplicados de notificaciones y mantener actualizado el recordatorio.
-    if (task.notificationId != null) {
-      NotificationService.cancelNotification(task.notificationId!);
+      task.title = newTitle;
+
+      // 🛠️ Combinar nueva fecha y hora si están presentes
+      if (newDate != null && newTime != null) {
+        task.dueDate = DateTime(
+          newDate.year,
+          newDate.month,
+          newDate.day,
+          newTime.hour,
+          newTime.minute,
+        );
+      } else {
+        task.dueDate = newDate;
+      }
+
+      task.notificationId = notificationId;
+
+      await task.save();
+      notifyListeners();
     }
-
-    // Se actualizan los campos, incluyendo la hora (1) y el ID de notificacion (2)
-    _tasks[index].title = newTitle;
-    _tasks[index].dueDate = newDate;
-    _tasks[index].dueTime = newTime;
-    _tasks[index].notificationId = notificationId;
-
-    notifyListeners();
   }
 }

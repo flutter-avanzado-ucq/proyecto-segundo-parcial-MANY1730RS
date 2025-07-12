@@ -20,7 +20,6 @@ class _TaskScreenState extends State<TaskScreen>
   @override
   void initState() {
     super.initState();
-    // Controlador para animar el icono de estado de tarea completada/incompleta
     _iconController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -33,7 +32,6 @@ class _TaskScreenState extends State<TaskScreen>
     super.dispose();
   }
 
-  // Función para mostrar el modal de agregar nueva tarea
   void _showAddTaskSheet() {
     showModalBottomSheet(
       context: context,
@@ -68,45 +66,34 @@ class _TaskScreenState extends State<TaskScreen>
                         verticalOffset: 30.0,
                         child: FadeInAnimation(
                           child: Dismissible(
-                            key: ValueKey(task.title),
+                            // Integración Hive: uso de task.key (HiveObject)
+                            key: ValueKey(task.key),
                             direction: DismissDirection.endToStart,
-                            onDismissed:
-                                (_) => taskProvider.removeTask(
-                                  index,
-                                ), // Aquí se llama la cancelación de la notificación si existe (en removeTask del Provider)
+                            onDismissed: (_) => taskProvider.removeTask(index),
                             background: Container(
                               alignment: Alignment.centerRight,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
                               margin: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
+                                  horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.red.shade300,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: const Icon(
-                                Icons.delete,
-                                color: Colors.white,
-                              ),
+                              child:
+                                  const Icon(Icons.delete, color: Colors.white),
                             ),
                             child: TaskCard(
-                              key: ValueKey(task.title),
+                              key: ValueKey(task
+                                  .key), // Integración Hive: uso de task.key
                               title: task.title,
                               isDone: task.done,
                               dueDate: task.dueDate,
-                              dueTime:
-                                  task.dueTime, // 1. Aquí se muestra el valor de `dueTime` (la hora de vencimiento)
                               onToggle: () {
                                 taskProvider.toggleTask(index);
                                 _iconController.forward(from: 0);
                               },
-                              onDelete:
-                                  () => taskProvider.removeTask(
-                                    index,
-                                  ), //Lógica para eliminar la tarea y su notificación
+                              onDelete: () => taskProvider.removeTask(index),
                               iconRotation: _iconController,
                               index: index,
                             ),
@@ -121,11 +108,12 @@ class _TaskScreenState extends State<TaskScreen>
           ],
         ),
       ),
-      // Botón flotante para agregar nueva tarea
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddTaskSheet,
         backgroundColor: Colors.pinkAccent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: const Icon(Icons.calendar_today),
       ),
     );

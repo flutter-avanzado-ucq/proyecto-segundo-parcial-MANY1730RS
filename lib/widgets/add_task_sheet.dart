@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../provider_task/task_provider.dart';
 import '../services/notification_service.dart';
 
-// Widget de formulario para agregar una nueva tarea
 class AddTaskSheet extends StatefulWidget {
   const AddTaskSheet({super.key});
 
@@ -13,12 +12,8 @@ class AddTaskSheet extends StatefulWidget {
 
 class _AddTaskSheetState extends State<AddTaskSheet> {
   final _controller = TextEditingController();
-
-  // 1. Aquí se declara la hora de vencimiento seleccionada para la tarea (dueTime)
-  TimeOfDay? _selectedTime;
-
-  // También se declara la fecha de vencimiento (dueDate)
   DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
 
   @override
   void dispose() {
@@ -26,23 +21,20 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     super.dispose();
   }
 
-  // Función que se llama al presionar "Agregar tarea"
   void _submit() async {
     final text = _controller.text.trim();
     if (text.isNotEmpty) {
       int? notificationId;
+      DateTime? finalDueDate;
 
-      // Muestra una notificación inmediata para confirmar al usuario
       await NotificationService.showImmediateNotification(
         title: 'Nueva tarea',
         body: 'Has agregado la tarea: $text',
         payload: 'Tarea: $text',
       );
 
-      // 1. Si el usuario seleccionó una fecha y una hora, se programa la notificación
       if (_selectedDate != null && _selectedTime != null) {
-        // Combina fecha + hora en un solo DateTime
-        final scheduledDateTime = DateTime(
+        finalDueDate = DateTime(
           _selectedDate!.year,
           _selectedDate!.month,
           _selectedDate!.day,
@@ -50,34 +42,30 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
           _selectedTime!.minute,
         );
 
-        // 2. Se genera un notificationId único
-        notificationId = DateTime.now().millisecondsSinceEpoch.remainder(
-          100000,
-        );
+        notificationId =
+            DateTime.now().millisecondsSinceEpoch.remainder(100000);
 
-        // 2. Se programa la notificación para el futuro con ese ID
         await NotificationService.scheduleNotification(
           title: 'Recordatorio de tarea',
           body: 'No olvides: $text',
-          scheduledDate: scheduledDateTime,
-          payload: 'Tarea programada: $text para $scheduledDateTime',
+          scheduledDate: finalDueDate,
+          payload: 'Tarea programada: $text para $finalDueDate',
           notificationId: notificationId,
         );
       }
 
-      // Se agrega la tarea al provider, incluyendo dueDate, dueTime y notificationId
+      // Integración Hive: guardar la tarea en Provider + Hive
       Provider.of<TaskProvider>(context, listen: false).addTask(
         text,
-        dueDate: _selectedDate,
-        dueTime: _selectedTime,
-        notificationId: notificationId, // 2. Se guarda el identificador aquí
+        dueDate: finalDueDate ??
+            _selectedDate, // Integración Hive: se pasa la fecha completa
+        notificationId: notificationId,
       );
 
-      Navigator.pop(context); // Cierra el formulario
+      Navigator.pop(context);
     }
   }
 
-  // Muestra un selector de fecha
   Future<void> _pickDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
@@ -93,7 +81,6 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     }
   }
 
-  // Muestra un selector de hora
   Future<void> _pickTime() async {
     final picked = await showTimePicker(
       context: context,
@@ -106,7 +93,6 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     }
   }
 
-  // UI del formulario de nueva tarea
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -119,10 +105,8 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Agregar nueva tarea',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+          const Text('Agregar nueva tarea',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
             controller: _controller,
@@ -143,8 +127,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
               const SizedBox(width: 10),
               if (_selectedDate != null)
                 Text(
-                  '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                ),
+                    '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'),
             ],
           ),
           const SizedBox(height: 12),
@@ -158,8 +141,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
               const Text('Hora: '),
               if (_selectedTime != null)
                 Text(
-                  '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}',
-                ),
+                    '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}'),
             ],
           ),
           const SizedBox(height: 12),
