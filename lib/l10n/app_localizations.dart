@@ -143,11 +143,11 @@ abstract class AppLocalizations {
   /// **'Select Time'**
   String get selectTime;
 
-  /// No description provided for @dueDate.
+  /// Text showing the due date with a placeholder for the date
   ///
   /// In en, this message translates to:
-  /// **'Due:'**
-  String get dueDate;
+  /// **'Due date: {date}'**
+  String dueDate(Object date);
 
   /// No description provided for @hourLabel.
   ///
@@ -220,6 +220,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change Time'**
   String get changeTime;
+
+  /// Message showing number of pending tasks with pluralization
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{You have no pending tasks} one{You have {count} pending task} other{You have {count} pending tasks}}'**
+  String pendingTasks(num count);
+
+  /// Label for language selector
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

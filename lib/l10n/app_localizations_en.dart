@@ -33,7 +33,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectTime => 'Select Time';
 
   @override
-  String get dueDate => 'Due:';
+  String dueDate(Object date) {
+    return 'Due date: $date';
+  }
 
   @override
   String get hourLabel => 'Time:';
@@ -70,4 +72,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get changeTime => 'Change Time';
+
+  @override
+  String pendingTasks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You have $count pending tasks',
+      one: 'You have $count pending task',
+      zero: 'You have no pending tasks',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get language => 'Language';
 }

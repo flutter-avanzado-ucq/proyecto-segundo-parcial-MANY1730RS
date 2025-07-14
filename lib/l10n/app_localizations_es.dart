@@ -33,7 +33,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectTime => 'Seleccionar hora';
 
   @override
-  String get dueDate => 'Vence:';
+  String dueDate(Object date) {
+    return 'Fecha de vencimiento: $date';
+  }
 
   @override
   String get hourLabel => 'Hora:';
@@ -70,4 +72,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get changeTime => 'Cambiar hora';
+
+  @override
+  String pendingTasks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Tienes $count tareas pendientes',
+      one: 'Tienes $count tarea pendiente',
+      zero: 'No tienes tareas pendientes',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get language => 'Idioma';
 }

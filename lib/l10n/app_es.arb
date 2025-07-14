@@ -21,5 +21,24 @@
   "editTaskTitle": "Editar Tarea",
   "selectTime": "Seleccionar hora",
   "changeDate": "Cambiar fecha",
-  "changeTime": "Cambiar hora"
+  "changeTime": "Cambiar hora",
+  "pendingTasks": "{count, plural, =0{No tienes tareas pendientes} one{Tienes {count} tarea pendiente} other{Tienes {count} tareas pendientes}}",
+  "@pendingTasks": {
+    "description": "Mensaje que muestra la cantidad de tareas pendientes con pluralización",
+    "placeholders": {
+      "count": {}
 }
+  },
+   "dueDate": "Fecha de vencimiento: {date}",
+  "@dueDate": {
+    "description": "Texto que muestra la fecha de vencimiento con un placeholder para la fecha",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "language": "Idioma",
+  "@language": {
+    "description": "Etiqueta para selector de idioma"
+  }
+}
+
