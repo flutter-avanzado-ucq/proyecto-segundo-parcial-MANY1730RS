@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animaciones_notificaciones/l10n/app_localizations.dart';
+import 'package:flutter_animaciones_notificaciones/provider_task/locale_provider.dart';
 // Integración Hive: importación de Hive Flutter
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -6,7 +8,9 @@ import 'screens/tarea_screen.dart';
 import 'tema/tema_app.dart';
 import 'package:provider/provider.dart';
 import 'provider_task/task_provider.dart';
-import 'provider_task/theme_provider.dart'; // NUEVO
+import 'provider_task/theme_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+//import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Importar modelo para Hive
 import 'models/task_model.dart';
@@ -38,7 +42,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TaskProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()), // ✅ NUEVO
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LocaleProvider()), // ✅ NUEVO
       ],
       child: const MyApp(),
     ),
@@ -50,18 +55,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, _) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Cambio de Tema',
-          theme: AppTheme.theme, // tema claro personalizado
-          darkTheme: ThemeData.dark(), // tema oscuro estándar
-          themeMode:
-              themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: const TaskScreen(),
-        );
-      },
+    final themeProvider = context.watch<ThemeProvider>();
+    final localeProvider = context.watch<LocaleProvider>();
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Tareas Pro',
+      theme: AppTheme.theme,
+      darkTheme: ThemeData.dark(),
+      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+
+      locale: localeProvider.locale,
+
+      // NUEVO: Configuración de internacionalización
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // Inglés
+        Locale('es'), // Español
+      ],
+
+      home: const TaskScreen(),
     );
   }
 }

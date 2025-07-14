@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animaciones_notificaciones/l10n/app_localizations.dart'
+    show AppLocalizations;
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 import '../widgets/card_tarea.dart';
 import '../widgets/header.dart';
 import '../widgets/add_task_sheet.dart';
 import '../provider_task/task_provider.dart';
-import '../provider_task/theme_provider.dart';
+import '../provider_task/theme_provider.dart'; // Nuevo import
+import '../provider_task/locale_provider.dart'; // nuevo import para manejo de idioma
+
+// Importar AppLocalizations generado
+//import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -47,21 +53,58 @@ class _TaskScreenState extends State<TaskScreen>
   @override
   Widget build(BuildContext context) {
     final taskProvider = context.watch<TaskProvider>();
+    final localizations =
+        AppLocalizations.of(context)!; // Obtener localización actual
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cambio de Tema'),
+        // Usar traducción en el título
+        title: Text(localizations.appTitle),
         actions: [
+          Consumer<LocaleProvider>(
+            builder: (context, localeProvider, _) {
+              return DropdownButton<Locale>(
+                underline: const SizedBox(), // quitar la línea de abajo
+                icon: Icon(Icons.language,
+                    color: Theme.of(context)
+                        .iconTheme
+                        .color), // Icono del selector de idioma
+                dropdownColor: const Color.fromARGB(
+                    255, 39, 117, 176), // o el color que quieras
+                value: localeProvider.locale,
+                items: [
+                  DropdownMenuItem(
+                    value: const Locale('es'),
+                    child: Text('ES',
+                        style: TextStyle(
+                            color: Theme.of(context).iconTheme.color)),
+                  ),
+                  DropdownMenuItem(
+                    value: const Locale('en'),
+                    child: Text('EN',
+                        style: TextStyle(
+                            color: Theme.of(context).iconTheme.color)),
+                  ),
+                ],
+                onChanged: (Locale? newLocale) {
+                  if (newLocale != null) {
+                    localeProvider.setLocale(newLocale);
+                  }
+                },
+              );
+            },
+          ),
+          // IconButton para cambiar tema claro/oscuro
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
               return IconButton(
                 icon: Icon(
                   themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
                 ),
-                tooltip: 'Cambiar tema',
+                // Usar traducción en el tooltip
+                tooltip: localizations.changeTheme,
                 onPressed: () {
-                  themeProvider
-                      .toggleTheme(); // Cambia y guarda el nuevo estado
+                  themeProvider.toggleTheme();
                 },
               );
             },

@@ -1,7 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_animaciones_notificaciones/l10n/app_localizations.dart'
+    show AppLocalizations;
 import 'package:intl/intl.dart';
 import '../widgets/edit_task_sheet.dart';
+
+// Importar AppLocalizations generado
+//import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskCard extends StatelessWidget {
   final String title;
@@ -25,6 +30,8 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 500),
       opacity: isDone ? 0.4 : 1.0,
@@ -80,13 +87,15 @@ class TaskCard extends StatelessWidget {
                     runSpacing: 4,
                     children: [
                       // Integración Hive: la hora y fecha se extraen de dueDate, que es un DateTime completo
+                      // practica: aquí se muestra la FECHA extraída de dueDate (incluye la fecha programada de la notificación)
                       Text(
-                        'Vence: ${DateFormat('dd/MM/yyyy').format(dueDate!)}',
+                        '${localizations.dueDate} ${DateFormat('dd/MM/yyyy').format(dueDate!)}',
                         style:
                             const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
+                      // practica: aquí se muestra la HORA extraída de dueDate (hora programada de la notificación)
                       Text(
-                        'Hora: ${DateFormat('HH:mm').format(dueDate!)}',
+                        '${localizations.hourLabel} ${DateFormat('HH:mm').format(dueDate!)}',
                         style:
                             const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
@@ -100,6 +109,7 @@ class TaskCard extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.edit, color: Colors.blue),
+                tooltip: localizations.editTask,
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
@@ -114,6 +124,7 @@ class TaskCard extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
+                tooltip: localizations.deleteTask,
                 onPressed: onDelete,
               ),
             ],
