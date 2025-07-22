@@ -3,6 +3,7 @@ import 'package:flutter_animaciones_notificaciones/l10n/app_localizations.dart'
     show AppLocalizations;
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
+import '../provider_task/weather_provider.dart';
 
 import '../widgets/card_tarea.dart';
 import '../widgets/header.dart';
@@ -29,6 +30,12 @@ class _TaskScreenState extends State<TaskScreen>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
+    // Cargar el clima al iniciar la pantalla
+    Future.microtask(() async {
+      final weatherProvider = context.read<WeatherProvider>();
+      await weatherProvider.loadWeather(
+          20.5888, -100.3899); // Ejemplo: queretaro
+    });
   }
 
   @override

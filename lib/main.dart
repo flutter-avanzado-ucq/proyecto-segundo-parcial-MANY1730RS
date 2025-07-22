@@ -3,6 +3,7 @@ import 'package:flutter_animaciones_notificaciones/l10n/app_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'provider_task/weather_provider.dart';
 
 import 'screens/tarea_screen.dart';
 import 'tema/tema_app.dart';
@@ -28,6 +29,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => TaskProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        ChangeNotifierProvider(create: (_) => WeatherProvider()),
       ],
       child: const MyApp(),
     ),

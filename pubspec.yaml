@@ -16,6 +16,9 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.0.15
 
+  # Animaciones Practica 21 Julio
+  http: ^1.2.0 
+
   cupertino_icons: ^1.0.8
   google_fonts: ^6.1.0
   flutter_staggered_animations: ^1.1.1
