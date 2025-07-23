@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'provider_task/weather_provider.dart';
+import 'package:flutter_animaciones_notificaciones/provider_task/holiday_provider.dart';
 
 import 'screens/tarea_screen.dart';
 import 'tema/tema_app.dart';
@@ -30,6 +31,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => WeatherProvider()),
+        ChangeNotifierProvider(create: (_) => HolidayProvider()),
       ],
       child: const MyApp(),
     ),

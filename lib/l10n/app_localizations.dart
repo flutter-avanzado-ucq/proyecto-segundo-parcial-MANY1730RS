@@ -221,6 +221,12 @@ abstract class AppLocalizations {
   /// **'Change Time'**
   String get changeTime;
 
+  /// No description provided for @holidayTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Holiday'**
+  String get holidayTag;
+
   /// Message showing number of pending tasks with pluralization
   ///
   /// In en, this message translates to:

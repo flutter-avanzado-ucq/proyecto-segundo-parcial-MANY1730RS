@@ -22,6 +22,7 @@
   "changeDate": "Change Date",
   "changeTime": "Change Time",
   "selectTime": "Select Time",
+  "holidayTag": "Holiday",
 
   "pendingTasks": "{count, plural, =0{You have no pending tasks} one{You have {count} pending task} other{You have {count} pending tasks}}",
   "@pendingTasks": {

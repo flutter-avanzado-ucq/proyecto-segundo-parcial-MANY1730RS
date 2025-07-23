@@ -74,6 +74,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changeTime => 'Change Time';
 
   @override
+  String get holidayTag => 'Holiday';
+
+  @override
   String pendingTasks(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

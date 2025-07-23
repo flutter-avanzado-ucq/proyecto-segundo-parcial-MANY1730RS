@@ -4,6 +4,8 @@ import 'package:flutter_animaciones_notificaciones/l10n/app_localizations.dart'
     show AppLocalizations;
 import 'package:intl/intl.dart';
 import '../widgets/edit_task_sheet.dart';
+import '../provider_task/holiday_provider.dart'; //Nuevo Import
+import 'package:provider/provider.dart';
 
 // Importar AppLocalizations generado
 //import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -31,6 +33,14 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    // Acceso al proveedor de feriados
+    final holidays = context.watch<HolidayProvider>().holidays;
+    final isHoliday = dueDate != null &&
+        holidays != null &&
+        holidays.any((h) =>
+            h.date.year == dueDate!.year &&
+            h.date.month == dueDate!.month &&
+            h.date.day == dueDate!.day);
 
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 500),
@@ -108,6 +118,16 @@ class TaskCard extends StatelessWidget {
                         style:
                             const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
+                      if (isHoliday)
+                        Text(
+                          localizations
+                              .holidayTag, // Utiliza el label de feriado
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                     ],
                   ),
                 ),

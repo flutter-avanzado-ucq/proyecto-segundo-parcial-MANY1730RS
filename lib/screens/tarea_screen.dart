@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animaciones_notificaciones/l10n/app_localizations.dart'
     show AppLocalizations;
+import 'package:flutter_animaciones_notificaciones/provider_task/holiday_provider.dart'; //Nuevo Import
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 import '../provider_task/weather_provider.dart';
@@ -31,11 +32,15 @@ class _TaskScreenState extends State<TaskScreen>
       duration: const Duration(milliseconds: 500),
     );
     // Cargar el clima al iniciar la pantalla
-    Future.microtask(() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final weatherProvider = context.read<WeatherProvider>();
-      await weatherProvider.loadWeather(
-          20.5888, -100.3899); // Ejemplo: queretaro
+      weatherProvider.loadWeather(20.5888, -100.3899); // Ejemplo: queretaro
     });
+    final now = DateTime.now();
+    context.read<HolidayProvider>().loadHolidays(
+          year: now.year,
+          countryCode: 'MX', // Cambia el código de país según sea necesario
+        );
   }
 
   @override
@@ -98,7 +103,7 @@ class _TaskScreenState extends State<TaskScreen>
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
                 localizations
-                    .pendingTasks(taskProvider.tasks.length), // ✅ pluralización
+                    .pendingTasks(taskProvider.tasks.length), //  pluralización
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),

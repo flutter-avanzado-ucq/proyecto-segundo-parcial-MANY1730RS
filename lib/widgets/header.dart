@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../provider_task/holiday_provider.dart'; //Nuevo Import
 import '../l10n/app_localizations.dart';
 //import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +15,10 @@ class Header extends StatelessWidget {
     //acceso al proveedor de clima
     final weatherProvider = Provider.of<WeatherProvider>(context);
     final weather = weatherProvider.weatherData;
+
+    // acceso al proveedor de feriados
+    final holidayProvider = Provider.of<HolidayProvider>(context);
+    final todayHoliday = holidayProvider.todayHoliday;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
@@ -46,6 +50,11 @@ class Header extends StatelessWidget {
                 localizations.todayTasks,
                 style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
+              if (todayHoliday != null)
+                Text(
+                  'Hoy es feriado: ${todayHoliday.localName}',
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                ),
               const SizedBox(height: 8),
 
               //mostrar clina si esta disponible
