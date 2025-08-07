@@ -1,0 +1,27 @@
+keytool -genkey -v -keystore ~/Desktop/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
+contraseña: openroad
+
+Introduzca la contraseña del almacén de claves:  
+Volver a escribir la contraseña nueva: 
+¿Cuáles son su nombre y su apellido?
+  [Unknown]:  Yusmany Rejopachi
+¿Cuál es el nombre de su unidad de organización?
+  [Unknown]:  ManyTech     
+¿Cuál es el nombre de su organización?
+  [Unknown]:  Tecnomany 
+¿Cuál es el nombre de su ciudad o localidad?
+  [Unknown]:  MX
+¿Cuál es el nombre de su estado o provincia?
+  [Unknown]:  MX
+¿Cuál es el código de país de dos letras de la unidad?
+  [Unknown]:  MX
+¿Es correcto CN=Yusmany Rejopachi, OU=ManyTech, O=Tecnomany, L=MX, ST=MX, C=MX?
+  [no]:  
+¿Es correcto CN=Yusmany Rejopachi, OU=ManyTech, O=Tecnomany, L=MX, ST=MX, C=MX?
+  [no]:  si
+
+Generando par de claves RSA de 2,048 bits para certificado autofirmado (SHA256withRSA) con una validez de 10,000 días
+        para: CN=Yusmany Rejopachi, OU=ManyTech, O=Tecnomany, L=MX, ST=MX, C=MX
+[Almacenando /Users/oro000492/Desktop/key.jks]
+
+
